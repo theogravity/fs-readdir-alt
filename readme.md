@@ -1,4 +1,7 @@
-## [![npm][npmjs-img]][npmjs-url]
+
+## fs-readdir-alt
+
+[![npm](https://img.shields.io/npm/v/fs-readdir-alt.svg)](https://npmjs.org/package/fs-readdir-alt)
 
 > fs.readdir done right! Support sync, async and stream API, recursiveness and filters.
 
@@ -19,7 +22,6 @@ npm i --save fs-readdir-alt
 node benchmark
 ```
 
-
 ## Usage
 > For more use-cases see the [tests](./test.js)
 
@@ -35,7 +37,6 @@ fsReaddir('../gitclone-cli', function _cb(err, filepaths) {
 });
 
 // callback api with opts
-
 fsReaddir('../gitclone-cli', {
   // recurse through directories
   recurse: true,
