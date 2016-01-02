@@ -1,6 +1,6 @@
 {
   "name": "fs-readdir-alt",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "fs-readdir with additional performance-enhancing options.",
   "scripts": {
     "lint": "jshint index.js && jscs index.js --reporter inline",

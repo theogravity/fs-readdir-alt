@@ -1,3 +1,7 @@
+# 1.0.1 (2016-01-01)
+
+Readme cleanup
+
 # 1.0.0 (2016-01-01)
 
 - Option to disable directory recursion
