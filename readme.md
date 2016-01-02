@@ -1,4 +1,4 @@
-## [![npm][npmjs-img]][npmjs-url] [![mit license][license-img]][license-url] [![build status][travis-img]][travis-url] [![coverage status][coveralls-img]][coveralls-url] [![deps status][daviddm-img]][daviddm-url]
+## [![npm][npmjs-img]][npmjs-url]
 
 > fs.readdir done right! Support sync, async and stream API, recursiveness and filters.
 
@@ -100,13 +100,6 @@ var stream = fsReaddir('../gitclone-cli')
 + [npmjs/tunnckoCore][author-npmjs]
 + [more ...][contrib-more]
 
-## License [![MIT license][license-img]][license-url]
+## License
 Copyright (c) 2014-2015 [Charlike Mike Reagent][contrib-more], [contributors][contrib-graf].  
-Released under the [`MIT`][license-url] license.
-
-[npmjs-url]: http://npm.im/fs-readdir-alt
-[npmjs-img]: https://img.shields.io/npm/v/fs-readdir-alt.svg?style=flat&label=fs-readdir-alt
-
-***
-
-_Powered and automated by [kdf](https://github.com/tunnckoCore), February 13, 2015_
+Released under the `MIT` license.
