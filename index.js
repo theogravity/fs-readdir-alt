@@ -7,6 +7,7 @@
 
 'use strict';
 
+var xtend = require('xtend');
 var fs = require('fs');
 var path = require('path');
 var ReaddirReadable = require('stream').Readable;
@@ -39,9 +40,19 @@ function fsReaddirAsync(root, opts, callback) {
       EventEmitter: false,
       emitterOptions: {maxListeners: 1},
     };
+  } else {
+    opts = xtend({
+      recurse: true,
+      includeFiles: true,
+      emitFiles: true,
+      emitDirs: true,
+      emitOnly: false,
+      stopOnError: false,
+      objectMode: true,
+      EventEmitter: false,
+      emitterOptions: {maxListeners: 1},
+    }, opts || {});
   }
-
-  opts = opts || {};
 
   var aborted = false;
   var stream = false;
@@ -68,9 +79,11 @@ function fsReaddirAsync(root, opts, callback) {
       stream.destroy();
       return;
     }
-    stream.push(res);
-    stream.emit('finish', res);
-    stream.destroy();
+    if (!aborted) {
+      stream.push(res);
+      stream.emit('finish', res);
+      stream.destroy();
+    }
   }
 
   var res = [];
@@ -86,8 +99,8 @@ function fsReaddirAsync(root, opts, callback) {
       return callback(null, res);
     }
 
-    files.every(function(fp) {
-      if (aborted) { return false;}
+    files.some(function(fp) {
+      if (aborted) {return true;}
       fp = path.join(root, fp)
 
       fs.stat(fp, function(err, stats) {
@@ -120,6 +133,11 @@ function fsReaddirAsync(root, opts, callback) {
                 return callback(null, res);
               }
             });
+          } else {
+            pending -= 1;
+            if (!pending) {
+              return callback(null, res);
+            }
           }
         }
         if (opts.includeFiles && aborted === false && stats.isFile()) {
@@ -129,6 +147,11 @@ function fsReaddirAsync(root, opts, callback) {
 
           res.push(fp);
 
+          pending -= 1;
+          if (!pending) {
+            return callback(null, res);
+          }
+        } else if (!stats.isDirectory()) {
           pending -= 1;
           if (!pending) {
             return callback(null, res);

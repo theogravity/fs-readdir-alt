@@ -56,6 +56,12 @@ fsReaddir('../gitclone-cli', {
   console.log('callback res:', filepaths)
 });
 
+// emitter only
+fsReaddir('../gitclone-cli', {
+  emitOnly: true
+}).on('error', function(err) {
+  console.log('error:', err);
+});
 
 // as stream
 var stream = fsReaddir('../gitclone-cli')
