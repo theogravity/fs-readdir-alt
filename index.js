@@ -29,6 +29,12 @@ function fsReaddirAsync(root, opts, callback) {
   if (typeof opts === 'function') {
     callback = opts;
     opts = {
+      recurse: true,
+      includeFiles: true,
+      emitFiles: true,
+      emitDirs: true,
+      emitOnly: false,
+      stopOnError: false,
       objectMode: true,
       EventEmitter: false,
       emitterOptions: {maxListeners: 1},
@@ -71,6 +77,7 @@ function fsReaddirAsync(root, opts, callback) {
   fs.readdir(root, function(err, files) {
     if (aborted) {return;}
     if (err) {
+      if (opts.stopOnError) {aborted = true;}
       return callback(err);
     }
 
@@ -79,36 +86,49 @@ function fsReaddirAsync(root, opts, callback) {
       return callback(null, res);
     }
 
-    files.forEach(function(fp) {
-      if (aborted) {return;}
+    files.every(function(fp) {
+      if (aborted) { return false;}
       fp = path.join(root, fp)
 
       fs.stat(fp, function(err, stats) {
         if (aborted) {return;}
         if (err) {
+          if (opts.stopOnError) {aborted = true;}
           return callback(err);
         }
 
         if (aborted === false && stats.isDirectory()) {
-          stream.emit('folder', fp);
-          stream.emit('directory', fp);
+          if (opts.emitDirs) {
+            stream.emit('folder', fp);
+            stream.emit('directory', fp);
+          }
 
-          return fsReaddirAsync(fp, function(err, fps) {
-            if (aborted) {return;}
-            if (err) {
-              return callback(err);
-            }
+          if (opts.recurse) {
+            return fsReaddirAsync(fp, function(err, fps) {
+              if (aborted) {return;}
+              if (err) {
+                if (opts.stopOnError) {aborted = true;}
+                return callback(err);
+              }
 
-            res = res.concat(fps);
-            pending -= 1;
-            if (!pending) {
-              return callback(null, res);
-            }
-          });
+              if (!opts.emitOnly) {
+                res = res.concat(fps);
+              }
+
+              pending -= 1;
+              if (!pending) {
+                return callback(null, res);
+              }
+            });
+          }
         }
-        if (aborted === false && stats.isFile()) {
-          stream.emit('file', fp);
+        if (opts.includeFiles && aborted === false && stats.isFile()) {
+          if (opts.emitFiles) {
+            stream.emit('file', fp);
+          }
+
           res.push(fp);
+
           pending -= 1;
           if (!pending) {
             return callback(null, res);
